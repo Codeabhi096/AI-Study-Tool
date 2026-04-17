@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.sqlite3
+
+# Virtual environment
+venv/
+.env/
+.env
+
+# FastAPI / logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# Node (if used for frontend tools)
+node_modules/
+
+# Build / dist
+dist/
+build/
+
+# Environment variables (IMPORTANT)
+.env
+
+# API keys
+*.env
+
+# Temporary files
+*.tmp
+*.swp
+
+# Uploaded files (if you store user uploads)
+uploads/
