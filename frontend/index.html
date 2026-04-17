@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Study Tool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="logo">
+      <span class="logo-icon">⚡</span>
+      <span class="logo-text">StudyAI</span>
+    </div>
+    <div class="badge" id="ai-badge">AI Ready</div>
+  </header>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <h1>Learn Anything,<br /><span class="accent">Instantly.</span></h1>
+    <p class="subtitle">Paste text or upload a file — AI explains, summarizes, and quizzes you.</p>
+  </section>
+
+  <!-- ── MAIN CARD ── -->
+  <main>
+    <div class="card input-card">
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" data-tab="text">📝 Paste Text</button>
+        <button class="tab" data-tab="file">📁 Upload File</button>
+      </div>
+
+      <!-- Text Input Panel -->
+      <div class="panel active" id="panel-text">
+        <textarea
+          id="text-input"
+          placeholder="Paste your notes, articles, code, or any text here..."
+          rows="8"
+        ></textarea>
+        <div class="char-count"><span id="char-count">0</span> characters</div>
+      </div>
+
+      <!-- File Upload Panel -->
+      <div class="panel" id="panel-file">
+        <div class="file-drop-zone" id="drop-zone">
+          <div class="drop-icon">📂</div>
+          <p>Drag & drop a file here</p>
+          <p class="file-hint">or click to browse</p>
+          <input type="file" id="file-input" accept=".pdf,.txt,.csv,.json" />
+          <div class="file-types">PDF &nbsp;·&nbsp; TXT &nbsp;·&nbsp; CSV &nbsp;·&nbsp; JSON</div>
+        </div>
+        <div class="file-selected hidden" id="file-selected">
+          <span class="file-icon">📄</span>
+          <span id="file-name-display">No file selected</span>
+          <button class="clear-file" id="clear-file">✕</button>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="actions">
+        <button class="btn btn-explain" data-action="explain">
+          <span class="btn-icon">🔍</span> Explain
+        </button>
+        <button class="btn btn-summarize" data-action="summarize">
+          <span class="btn-icon">📋</span> Summarize
+        </button>
+        <button class="btn btn-quiz" data-action="quiz">
+          <span class="btn-icon">🧠</span> Quiz Me
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ── OUTPUT ── -->
+    <div class="card output-card hidden" id="output-card">
+
+      <div class="output-header">
+        <div class="output-title" id="output-title">Result</div>
+        <div class="output-meta">
+          <span class="source-badge" id="source-badge">—</span>
+          <button class="copy-btn" id="copy-btn" title="Copy result">⎘ Copy</button>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div class="loading hidden" id="loading">
+        <div class="spinner"></div>
+        <span id="loading-text">Thinking...</span>
+      </div>
+
+      <!-- Result text -->
+      <div class="output-body" id="output-body"></div>
+
+      <!-- Follow-up suggestions -->
+      <div class="suggestions hidden" id="suggestions">
+        <p class="suggest-label">✨ What's next?</p>
+        <div class="suggest-chips" id="suggest-chips"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <p>Built with FastAPI + Gemini + Groq &nbsp;·&nbsp; <a href="https://github.com" target="_blank">GitHub</a></p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
