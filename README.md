@@ -27,9 +27,16 @@ Upload or paste content — get explanations, summaries, and quizzes in seconds.
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="Screenshots/AI_Study_Tool1.png" width="30%" />
-  <img src="Screenshots/AI_Study_Tool2.png" width="30%" />
-  <img src="Screenshots/AI_Study_Tool3.png" width="30%" />
+ ## 📸 Screenshots
+
+### 🏠 Home Interface
+<img src="Screenshots/AI_Study_Tool1.png" width="100%" />
+
+### 📄 File Upload
+<img src="Screenshots/AI_Study_Tool2.png" width="100%" />
+
+### 🧠 Output
+<img src="Screenshots/AI_Study_Tool3.png" width="100%" />
 </p>
 
 ---
