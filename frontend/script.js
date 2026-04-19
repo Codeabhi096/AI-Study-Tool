@@ -1,6 +1,6 @@
 // ── CONFIG ───────────────────────────────────────────────
 const IS_LOCAL = ["localhost","127.0.0.1"].includes(window.location.hostname);
-const DEFAULT_BACKEND = IS_LOCAL ? "http://localhost:8000" : "https://your-backend.onrender.com";
+const DEFAULT_BACKEND = IS_LOCAL ? "http://localhost:8000" : "https://ai-study-tool-4tnw.onrender.com";
 
 let API_BASE  = localStorage.getItem("sai_backend") || DEFAULT_BACKEND;
 let LANG_PREF = localStorage.getItem("sai_lang")    || "English";
