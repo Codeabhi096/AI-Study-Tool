@@ -6,225 +6,249 @@
   <title>StudyAI — Learn Anything, Instantly</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <div class="bg-grid"></div>
-  <div class="bg-orb orb1"></div>
-  <div class="bg-orb orb2"></div>
-  <div class="bg-orb orb3"></div>
+  <canvas id="bg-canvas"></canvas>
+  <div class="noise"></div>
 
   <!-- HEADER -->
-  <header>
+  <header id="header">
     <div class="logo">
-      <div class="logo-mark">
-        <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
-          <path d="M14 2L24 8V20L14 26L4 20V8L14 2Z" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M14 7L20 10.5V17.5L14 21L8 17.5V10.5L14 7Z" fill="currentColor" opacity="0.25"/>
-          <circle cx="14" cy="14" r="2.5" fill="currentColor"/>
+      <div class="logo-icon">
+        <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+          <path d="M16 2L28 9V23L16 30L4 23V9L16 2Z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/>
+          <path d="M16 8L23 12V20L16 24L9 20V12L16 8Z" fill="currentColor" opacity="0.2"/>
+          <circle cx="16" cy="16" r="3" fill="currentColor"/>
         </svg>
       </div>
-      <span class="logo-text">Study<em>AI</em></span>
+      <span class="logo-text">Study<span class="logo-accent">AI</span></span>
     </div>
-
-    <nav class="header-nav">
-      <span class="nav-item" id="history-toggle">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <nav class="nav">
+      <button class="nav-btn" id="history-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         History
-      </span>
-      <span class="nav-item" id="settings-toggle">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+      <button class="nav-btn" id="settings-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         Settings
-      </span>
-      <div class="status-pill" id="status-pill">
-        <span class="status-dot"></span>
-        <span id="status-text">Connecting…</span>
+      </button>
+      <div class="status-chip" id="status-chip">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-label">Connecting</span>
       </div>
     </nav>
   </header>
 
-  <!-- SETTINGS PANEL -->
-  <div class="floating-panel hidden" id="settings-panel">
-    <div class="fp-inner">
-      <h3 class="fp-title">⚙️ Settings</h3>
-      <div class="setting-row">
-        <label class="setting-label">Backend URL</label>
-        <input type="text" id="backend-url-input" class="setting-input" placeholder="https://your-backend.onrender.com" />
-        <p class="setting-hint">Render deploy URL yahan paste karo</p>
-      </div>
-      <div class="setting-row">
-        <label class="setting-label">Response Language</label>
-        <select id="lang-select" class="setting-input">
-          <option value="English">🇺🇸 English</option>
-          <option value="Hindi">🇮🇳 Hindi</option>
-          <option value="Hinglish">🇮🇳 Hinglish</option>
-          <option value="Spanish">🇪🇸 Spanish</option>
-          <option value="French">🇫🇷 French</option>
-        </select>
-      </div>
-      <button class="fp-save" id="settings-save">Save & Reconnect</button>
+  <!-- SETTINGS DRAWER -->
+  <div class="drawer-backdrop hidden" id="settings-backdrop"></div>
+  <div class="drawer hidden" id="settings-drawer">
+    <div class="drawer-head">
+      <h3>Settings</h3>
+      <button class="close-btn" id="settings-close">✕</button>
+    </div>
+    <div class="drawer-body">
+      <label class="field-label">Backend URL</label>
+      <input type="text" id="backend-input" class="field-input" placeholder="https://your-backend.onrender.com" />
+      <p class="field-hint">Your Render deployment URL</p>
+
+      <label class="field-label" style="margin-top:1.5rem">Response Language</label>
+      <select id="lang-select" class="field-input">
+        <option value="English">🇺🇸 English</option>
+        <option value="Hindi">🇮🇳 Hindi</option>
+        <option value="Hinglish">🇮🇳 Hinglish</option>
+        <option value="Spanish">🇪🇸 Spanish</option>
+        <option value="French">🇫🇷 French</option>
+      </select>
+
+      <button class="primary-btn" id="settings-save">Save &amp; Reconnect</button>
     </div>
   </div>
 
-  <!-- HISTORY PANEL -->
-  <div class="floating-panel hidden" id="history-panel" style="width:360px">
-    <div class="fp-inner">
-      <div class="fp-header">
-        <h3 class="fp-title">📜 History</h3>
-        <button class="danger-btn" id="clear-history">Clear All</button>
+  <!-- HISTORY DRAWER -->
+  <div class="drawer-backdrop hidden" id="history-backdrop"></div>
+  <div class="drawer hidden" id="history-drawer" style="right:0;left:auto">
+    <div class="drawer-head">
+      <h3>Session History</h3>
+      <div style="display:flex;gap:.6rem;align-items:center">
+        <button class="text-danger-btn" id="clear-history-btn">Clear all</button>
+        <button class="close-btn" id="history-close">✕</button>
       </div>
-      <div id="history-list" class="history-list">
-        <p class="empty-msg">No history. analyze content!</p>
+    </div>
+    <div id="history-list" class="history-list">
+      <div class="empty-state">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".4"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <p>No history yet</p>
+        <span>Analyzed sessions appear here</span>
       </div>
     </div>
   </div>
 
   <!-- HERO -->
   <section class="hero">
-    <div class="eyebrow">
-      <span class="eyebrow-dot"></span>
-      Gemini + Groq Powered · Free AI
+    <div class="hero-pill reveal">
+      <span class="pulse-dot"></span>
+      Powered by Gemini
     </div>
-    <h1 class="hero-title">
-      Kuch bhi seekho,<br/>
-      <span class="hero-italic">turant.</span>
+    <h1 class="hero-h1 reveal" style="animation-delay:.08s">
+      Learn anything,
+      <br/><em class="serif-em">effortlessly.</em>
     </h1>
-    <p class="hero-sub">Text paste karo ya file upload karo — AI explain karega, summarize karega, quiz lega, flashcards banayega.</p>
-    <div class="hero-stats">
-      <div class="stat"><span class="stat-num">5</span><span class="stat-label">AI Modes</span></div>
-      <div class="stat-sep"></div>
-      <div class="stat"><span class="stat-num">4</span><span class="stat-label">File Types</span></div>
-      <div class="stat-sep"></div>
-      <div class="stat"><span class="stat-num">Free</span><span class="stat-label">Always</span></div>
+    <p class="hero-p reveal" style="animation-delay:.16s">
+      Paste text or upload a document — AI explains, summarizes, quizzes,<br class="d-br"/> creates flashcards and mind maps for you.
+    </p>
+    <div class="feature-row reveal" style="animation-delay:.24s">
+      <span class="ftag">🔍 Explain</span>
+      <span class="ftag">📋 Summarize</span>
+      <span class="ftag">🧠 Quiz Me</span>
+      <span class="ftag">🃏 Flashcards</span>
+      <span class="ftag">🗺️ Mind Map</span>
     </div>
   </section>
 
-  <!-- MAIN -->
+  <!-- MAIN CONTENT -->
   <main>
 
     <!-- INPUT CARD -->
-    <div class="card">
-      <div class="card-top">
-        <div class="tabs">
-          <button class="tab active" data-tab="text">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-            Text Paste karo
-          </button>
-          <button class="tab" data-tab="file">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            File Upload karo
-          </button>
-        </div>
-        <div id="word-counter" class="word-counter hidden">
-          <span id="word-count">0</span>w · <span id="char-count">0</span>c
+    <div class="card reveal" style="animation-delay:.28s" id="input-card">
+
+      <!-- Tab bar -->
+      <div class="tab-bar">
+        <button class="tab active" data-tab="text">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Paste Text
+        </button>
+        <button class="tab" data-tab="file">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload File
+        </button>
+        <div class="word-stat hidden" id="word-stat">
+          <span id="word-count">0</span>w &nbsp;·&nbsp; <span id="char-count">0</span>c
         </div>
       </div>
 
       <!-- Text Panel -->
-      <div class="panel active" id="panel-text">
-        <textarea id="text-input" placeholder="Yahan apne notes, article, lecture, code — kuch bhi paste karo…" rows="9" spellcheck="true"></textarea>
-        <div class="panel-foot">
-          <span></span>
+      <div class="tab-content active" id="panel-text">
+        <textarea id="text-input" placeholder="Paste your notes, article, lecture, code — anything you want to learn from…" spellcheck="true"></textarea>
+        <div class="ta-footer">
           <button class="ghost-btn hidden" id="clear-text">Clear</button>
         </div>
       </div>
 
       <!-- File Panel -->
-      <div class="panel" id="panel-file">
-        <div class="drop-zone" id="drop-zone">
+      <div class="tab-content" id="panel-file">
+        <div class="dropzone" id="drop-zone">
           <input type="file" id="file-input" accept=".pdf,.txt,.csv,.json" />
-          <div id="drop-content">
-            <div class="drop-icon">
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div class="dz-inner">
+            <div class="dz-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             </div>
-            <p class="drop-title">File yahan drop karo</p>
-            <p class="drop-sub">ya <span class="link">browse karo</span></p>
-            <p class="drop-types">PDF · TXT · CSV · JSON</p>
+            <p class="dz-title">Drop your file here</p>
+            <p class="dz-sub">or <span class="dz-link">click to browse</span></p>
+            <p class="dz-formats">PDF &nbsp;·&nbsp; TXT &nbsp;·&nbsp; CSV &nbsp;·&nbsp; JSON</p>
           </div>
         </div>
-        <div class="file-chip hidden" id="file-selected">
-          <span class="ext-tag" id="file-ext">PDF</span>
-          <span id="file-name-display" class="file-name"></span>
-          <span id="file-size" class="file-size-txt"></span>
-          <button class="ghost-btn" id="clear-file">✕</button>
+        <div class="file-bar hidden" id="file-bar">
+          <div class="file-meta">
+            <span class="file-ext" id="file-ext">PDF</span>
+            <span class="file-name" id="file-name">filename.pdf</span>
+            <span class="file-size-txt" id="file-size"></span>
+          </div>
+          <button class="icon-btn" id="clear-file">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
       </div>
 
-      <!-- Action Bar -->
+      <!-- Action bar -->
       <div class="action-bar">
-        <div class="mode-btns">
-          <button class="mode-btn selected" data-action="explain">🔍 Explain</button>
+        <div class="mode-group">
+          <button class="mode-btn active" data-action="explain">🔍 Explain</button>
           <button class="mode-btn" data-action="summarize">📋 Summarize</button>
           <button class="mode-btn" data-action="quiz">🧠 Quiz Me</button>
           <button class="mode-btn" data-action="flashcards">🃏 Flashcards</button>
           <button class="mode-btn" data-action="mindmap">🗺️ Mind Map</button>
         </div>
         <button class="run-btn" id="run-btn" disabled>
-          Run <svg class="arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <span id="run-label">Run</span>
+          <svg class="run-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
       </div>
     </div>
 
     <!-- OUTPUT CARD -->
-    <div class="card out-card hidden" id="output-card">
-      <div class="out-header">
-        <span class="out-label" id="output-label">Result</span>
-        <div class="out-actions">
-          <span class="src-badge" id="src-badge">—</span>
-          <button class="icon-btn" id="copy-btn">
+    <div class="card output-card hidden" id="output-card">
+
+      <div class="out-head">
+        <div class="out-title-row">
+          <span class="out-icon" id="out-icon">📖</span>
+          <span class="out-title" id="out-title">Result</span>
+          <span class="source-tag" id="source-tag">Gemini</span>
+        </div>
+        <div class="out-btns">
+          <button class="out-btn" id="copy-btn">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            <span id="copy-txt">Copy</span>
+            <span id="copy-lbl">Copy</span>
           </button>
-          <button class="icon-btn" id="download-btn">
+          <button class="out-btn" id="download-btn">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Download
           </button>
         </div>
       </div>
 
-      <!-- Loading -->
+      <!-- Loading state -->
       <div class="loading hidden" id="loading">
-        <div class="bars"><div></div><div></div><div></div><div></div><div></div></div>
-        <p id="loading-text">Soch raha hoon…</p>
+        <div class="loading-bars">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <p id="loading-text">Analyzing your content…</p>
       </div>
 
-      <!-- Flashcard Viewer -->
+      <!-- Flashcard viewer -->
       <div class="fc-viewer hidden" id="fc-viewer">
-        <div class="fc-prog"><span id="fc-cur">1</span> / <span id="fc-tot">6</span></div>
-        <div class="fc-card" id="fc-card">
-          <div class="fc-front" id="fc-front"></div>
-          <div class="fc-back hidden" id="fc-back"></div>
-          <p class="fc-hint" id="fc-hint">Click karke reveal karo</p>
+        <div class="fc-top">
+          <div class="fc-progress-track">
+            <div class="fc-progress-fill" id="fc-fill"></div>
+          </div>
+          <span class="fc-count"><span id="fc-cur">1</span> / <span id="fc-tot">6</span></span>
         </div>
-        <div class="fc-nav">
-          <button class="nav-btn" id="fc-prev">← Pehla</button>
-          <button class="flip-btn" id="fc-flip">Flip karo</button>
-          <button class="nav-btn" id="fc-next">Agla →</button>
+        <div class="fc-scene" id="fc-scene">
+          <div class="fc-card" id="fc-card">
+            <div class="fc-front">
+              <p class="fc-side-label">Front</p>
+              <p class="fc-text" id="fc-front-txt"></p>
+            </div>
+            <div class="fc-back">
+              <p class="fc-side-label">Answer</p>
+              <p class="fc-text" id="fc-back-txt"></p>
+            </div>
+          </div>
+        </div>
+        <p class="fc-hint" id="fc-hint">Click card to reveal answer</p>
+        <div class="fc-btns">
+          <button class="fc-nav-btn" id="fc-prev">← Prev</button>
+          <button class="fc-flip-btn" id="fc-flip">Flip Card</button>
+          <button class="fc-nav-btn" id="fc-next">Next →</button>
         </div>
       </div>
 
       <!-- Output body -->
-      <div class="out-body" id="out-body"></div>
+      <div class="out-body hidden" id="out-body"></div>
 
       <!-- Follow-up -->
-      <div class="follow hidden" id="follow">
-        <p class="follow-label">Aage kya karoge?</p>
-        <div class="follow-chips" id="follow-chips"></div>
+      <div class="followup hidden" id="followup">
+        <p class="fu-label">Continue with</p>
+        <div class="fu-chips" id="fu-chips"></div>
       </div>
     </div>
 
   </main>
 
   <footer>
-    <div class="footer-row">
-      <span>Built with ❤️ · Gemini + Groq · FastAPI</span>
-      <span class="sep">·</span>
-      <a href="https://github.com/Codeabhi096/AI-Study-Tool" target="_blank">GitHub</a>
-      <span class="sep">·</span>
-      <span>Free deploy: Vercel + Render</span>
-    </div>
+    <p>StudyAI  Build by <a href = "https://mrabhi-7208.netlify.app/" >Abhishek Pathak</a></p>
   </footer>
 
   <script src="script.js"></script>
