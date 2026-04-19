@@ -1,109 +1,99 @@
 # ⚡ AI Study Tool
 
-A lightweight, free-to-deploy AI-powered study assistant. Upload or paste text, PDFs, CSVs, or JSON — get instant explanations, summaries, and quizzes.
+An AI-powered study assistant that helps you **understand, summarize, and test your knowledge instantly**.
+Upload or paste content — get explanations, summaries, and quizzes in seconds.
+
+---
+
+## 🌐 Live Demo
+
+* 🚀 **App:** https://ai-study-tool-wyrb.vercel.app/
+* 👨‍💻 **Portfolio:** https://mrabhi-7208.netlify.app/
 
 ---
 
 ## ✨ Features
 
-| Feature | Description |
-|---|---|
-| 📝 Paste Text | Paste notes, articles, code, or anything |
-| 📁 File Upload | Upload PDF, TXT, CSV, or JSON files |
-| 🔍 Explain | AI explains content in simple terms |
-| 📋 Summarize | Concise, structured summary |
-| 🧠 Quiz Me | Auto-generated 5-question quiz |
-| 💡 Smart Suggestions | Follow-up chips after every result |
-| 🔁 AI Fallback | Gemini → Groq → error message |
+* 📝 Paste text (notes, articles, code)
+* 📁 Upload files (PDF, TXT, CSV, JSON)
+* 🔍 Explain complex content in simple terms
+* 📋 Generate clean summaries
+* 🧠 Auto-create quizzes
+* 💡 Smart follow-up suggestions
+* 🔁 Reliable AI response system
 
 ---
 
-## 🛠️ Tech Stack
+## 📸 Screenshots
 
-```
-Frontend:   HTML + CSS + Vanilla JS   → Vercel (free)
-Backend:    FastAPI (Python)          → Render (free)
-AI APIs:    Google Gemini Flash       → Primary
-            Groq (llama3-8b)          → Fallback
-```
+<p align="center">
+  <img src="Screenshots/AI_Study_Tool1.png" width="30%" />
+  <img src="Screenshots/AI_Study_Tool2.png" width="30%" />
+  <img src="Screenshots/AI_Study_Tool3.png" width="30%" />
+</p>
+
+---
+
+## 🧱 Tech Stack
+
+* Frontend: HTML, CSS, JavaScript
+* Backend: FastAPI (Python)
+* AI Integration: Modern LLM APIs
+* Deployment: Cloud-based hosting
 
 ---
 
 ## 📁 Project Structure
 
-```
+```id="str1"
 ai-study-tool/
-├── backend/
-│   ├── main.py            ← FastAPI app (all endpoints + AI logic)
-│   ├── requirements.txt   ← Python dependencies
-│   ├── render.yaml        ← Render deployment config
-│   └── .env.example       ← API key template
+├── Backend/
 ├── frontend/
-│   ├── index.html         ← Main UI
-│   ├── style.css          ← Styles
-│   ├── script.js          ← All JS logic + fetch calls
-│   └── vercel.json        ← Vercel config
+├── Screenshots/
 └── README.md
 ```
 
+---
 
-## 🚀 Local Setup
+## 🚀 Getting Started (Local)
 
 ### Backend
-```bash
-cd backend
+
+```bash id="str2"
+cd Backend
 pip install -r requirements.txt
-cp .env.example .env
-# Edit .env with your API keys
 uvicorn main:app --reload
-# Runs at http://localhost:8000
 ```
 
 ### Frontend
-```bash
+
+```bash id="str3"
 cd frontend
-# Just open index.html in browser — no build step!
-# Or use live-server:
-npx live-server .
+open index.html
 ```
-
-> **Note:** When running locally, `script.js` auto-detects localhost and points to `http://localhost:8000`.
-
-
-
---
-
-## 📡 API Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/` | Health check |
-| POST | `/process-text` | Process pasted text |
-| POST | `/upload-file` | Process uploaded file |
-| POST | `/quiz` | Generate quiz (alias) |
-
-### POST `/process-text`
-```json
-{
-  "content": "your text here",
-  "action": "explain"   // explain | summarize | quiz
-}
-```
-
-### POST `/upload-file`
-- Form data: `file` (multipart), `action` (string)
 
 ---
 
-## 💡 Tips
+## 📡 API Overview
 
-- **PDF not parsing?** Make sure `pdfplumber` is installed (it's in requirements.txt)
-- **Render cold start?** Free tier sleeps after 15 min inactivity. First request may be slow.
-- **Rate limits?** Both Gemini and Groq free tiers have generous limits for personal use.
-- **CORS errors?** The backend allows all origins (`*`). For production, restrict to your Vercel domain.
+* `POST /process-text` → Explain / Summarize / Quiz
+* `POST /upload-file` → Process uploaded files
 
 ---
 
-## 📄 License
+## ⚠️ Notes
 
-MIT — free to use and modify.
+* Free hosting may cause slight delay on first request
+* Some complex files may take longer to process
+
+---
+
+## 📜 License
+
+MIT License
+
+---
+
+## ⭐ Support
+
+If you found this useful, consider giving it a ⭐ on GitHub!
