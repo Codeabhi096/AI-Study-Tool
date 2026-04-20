@@ -1,6 +1,3 @@
-ठीक है — ये **direct copy-paste README.md code** है 👇
-
-````md
 # ⚡ AI Study Tool
 
 AI-powered study assistant that converts content into **explanations, summaries, quizzes, and flashcards with spaced repetition (SM-2)**.
@@ -53,37 +50,8 @@ AI-powered study assistant that converts content into **explanations, summaries,
 ## 🚀 Local Setup
 
 ### Backend
+
 ```bash
 cd Backend
 pip install -r requirements.txt
 uvicorn main:app --reload
-````
-
-### Frontend
-
-```bash
-cd frontend
-open index.html
-```
-
----
-
-## 📡 API
-
-* `POST /process-text`
-* `POST /upload-file`
-* `POST /decks`
-* `GET /decks`
-* `GET /decks/{id}`
-* `POST /cards/{id}/review`
-
----
-
-## ⚠️ Notes
-
-* Free hosting may cause cold start delay
-* SQLite is used (non-persistent on free tier)
-
----
-## 📜 License
-MIT License
