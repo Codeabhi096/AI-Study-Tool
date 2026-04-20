@@ -27,13 +27,13 @@ AI-powered study assistant that converts content into **explanations, summaries,
 ## 📸 Screenshots
 
 ### Home
-![Home](Screenshots/AI_Study_Tool1.png)
+![Home] (Screenshots/AI_Study_Tool3.png)
 
-### File Upload
-![Upload](Screenshots/AI_Study_Tool2.png)
+### Input
+![Upload](Screenshots/AI_Study_Tool1.png) 
 
 ### Output / Flashcards
-![Output](Screenshots/AI_Study_Tool3.png)
+![Output] (Screenshots\AI_Study_Tool2.png)
 
 ---
 
