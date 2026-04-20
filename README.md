@@ -1,80 +1,118 @@
-# ⚡ AI Study Tool
 
-An AI-powered study assistant that helps you **understand, summarize, and test your knowledge instantly**.
-Upload or paste content — get explanations, summaries, and quizzes in seconds.
+# ⚡ AI Study Tool – The Flashcard Engine
+
+An advanced AI-powered study assistant that transforms **passive content into active learning systems** using summaries, quizzes, flashcards, and **spaced repetition (SM-2 algorithm)**.
 
 ---
 
 ## 🌐 Live Demo
 
-* 🚀 **App:** https://ai-study-tool-wyrb.vercel.app/
-* 👨‍💻 **Portfolio:** https://mrabhi-7208.netlify.app/
+* 🚀 **App:** [https://ai-study-tool-wyrb.vercel.app/](https://ai-study-tool-wyrb.vercel.app/)
+* 👨‍💻 **Portfolio:** [https://mrabhi-7208.netlify.app/](https://mrabhi-7208.netlify.app/)
+
+---
+
+## 🚀 What Makes This Different?
+
+Most tools just summarize content.
+This tool goes further — it converts content into a **complete learning cycle**:
+
+> 📥 Input → 🧠 Understanding → 🃏 Practice → 🔁 Retention
 
 ---
 
 ## ✨ Features
 
+### 📥 Input & Processing
+
 * 📝 Paste text (notes, articles, code)
 * 📁 Upload files (PDF, TXT, CSV, JSON)
-* 🔍 Explain complex content in simple terms
-* 📋 Generate clean summaries
-* 🧠 Auto-create quizzes
-* 💡 Smart follow-up suggestions
-* 🔁 Reliable AI response system
+* 🎥 YouTube video link support
 
 ---
 
-## 📸 Screenshots
+### 🧠 AI-Powered Learning
 
-<p align="center">
- ## 📸 Screenshots
+* 🔍 Explain complex content in simple terms
+* 📋 Generate structured summaries
+* 📝 Create smart revision notes
+* 🧪 Auto-generate quizzes
+* 💬 Interactive AI chat assistant
 
-### 🏠 Home Interface
-<img src="Screenshots/AI_Study_Tool1.png" width="100%" />
+---
 
-### 📄 File Upload
-<img src="Screenshots/AI_Study_Tool2.png" width="100%" />
+### 🃏 Flashcards System
 
-### 🧠 Output
-<img src="Screenshots/AI_Study_Tool3.png" width="100%" />
-</p>
+* Auto-generate flashcards from content
+* Covers key concepts, definitions, and insights
+* Designed for **active recall learning**
+
+---
+
+### 📂 Deck Management 
+
+* 💾 Save flashcards as decks
+* 📚 View all decks in "My Decks"
+* 🔁 Review cards anytime
+* 📊 Track learning progress
+
+---
+
+### 📄 Export & Utility
+
+* Download notes
+* Multi-language support
+* Smart follow-up suggestions
 
 ---
 
 ## 🧱 Tech Stack
 
-* Frontend: HTML, CSS, JavaScript
-* Backend: FastAPI (Python)
-* AI Integration: Modern LLM APIs
-* Deployment: Cloud-based hosting
+**Frontend:**
+
+* HTML, CSS, JavaScript
+
+**Backend:**
+
+* FastAPI (Python)
+
+**Database:**
+
+* SQLite
+
+**AI Integration:**
+
+* Gemini API
+* Groq API
+
+**Algorithm:**
+
+* SM-2 (Spaced Repetition)
+
+**Deployment:**
+
+* Vercel (Frontend)
+* Render (Backend)
 
 ---
 
-## 📁 Project Structure
 
-```id="str1"
-ai-study-tool/
-├── Backend/
-├── frontend/
-├── Screenshots/
-└── README.md
-```
 
----
+## 🚀 Getting Started (Local Setup)
 
-## 🚀 Getting Started (Local)
+### 🔧 Backend
 
-### Backend
-
-```bash id="str2"
+```bash
 cd Backend
 pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-### Frontend
+---
 
-```bash id="str3"
+### 🌐 Frontend
+
+```bash
 cd frontend
 open index.html
 ```
@@ -83,15 +121,46 @@ open index.html
 
 ## 📡 API Overview
 
+### Core APIs
+
 * `POST /process-text` → Explain / Summarize / Quiz
 * `POST /upload-file` → Process uploaded files
+
+### Flashcards & Decks
+
+* `POST /create-deck` → Save flashcards as deck
+* `GET /decks` → Get all decks
+* `GET /review/{deck_id}` → Start review session
+* `POST /review` → Submit answer (SM-2 logic applied)
+
+---
+
+## 🧠 How It Works
+
+1. User uploads content (PDF / text / video)
+2. FastAPI backend processes input
+3. AI generates structured outputs (notes, quiz, flashcards)
+4. Flashcards can be saved into decks
+5. SM-2 algorithm schedules future reviews
+6. User practices using spaced repetition
 
 ---
 
 ## ⚠️ Notes
 
-* Free hosting may cause slight delay on first request
-* Some complex files may take longer to process
+* First request may be slow (free hosting cold start)
+* Large files may take longer to process
+* API keys are securely handled on backend
+
+---
+
+## 🔮 Future Improvements
+
+* 📊 Advanced analytics & mastery tracking
+* 👤 User authentication
+* ☁️ Cloud database (PostgreSQL)
+* 🎨 Improved UI/UX
+* 📱 Mobile responsiveness
 
 ---
 
@@ -104,3 +173,5 @@ MIT License
 ## ⭐ Support
 
 If you found this useful, consider giving it a ⭐ on GitHub!
+
+---
