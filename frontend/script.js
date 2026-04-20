@@ -40,7 +40,6 @@ try { sessionHistory = JSON.parse(localStorage.getItem("sai_history") || "[]"); 
   function draw() {
     ctx.clearRect(0, 0, W, H);
 
-    // Gradient mesh
     const g1 = ctx.createRadialGradient(W * 0.2, H * 0.15, 0, W * 0.2, H * 0.15, W * 0.5);
     g1.addColorStop(0, "rgba(79,142,240,0.07)");
     g1.addColorStop(1, "transparent");
@@ -53,7 +52,6 @@ try { sessionHistory = JSON.parse(localStorage.getItem("sai_history") || "[]"); 
     ctx.fillStyle = g2;
     ctx.fillRect(0, 0, W, H);
 
-    // Particles
     particles.forEach(p => {
       p.x += p.vx; p.y += p.vy;
       if (p.x < 0 || p.x > W || p.y < 0 || p.y > H) p.reset();
@@ -245,10 +243,8 @@ runBtn.addEventListener("click", () => run(currentAction));
 async function run(action) {
   currentAction = action;
 
-  // Sync active mode button
   modeBtns.forEach(b => b.classList.toggle("active", b.dataset.action === action));
 
-  // Reset output area
   outputCard.classList.remove("hidden");
   followup.classList.add("hidden");
   outBody.classList.add("hidden");
@@ -256,7 +252,10 @@ async function run(action) {
   fcViewer.classList.add("hidden");
   loadingEl.classList.remove("hidden");
 
-  // Set header
+  // Hide save deck button while loading
+  const existingSave = $("save-deck-btn");
+  if (existingSave) existingSave.remove();
+
   const META = {
     explain:    { icon:"📖", title:"Explanation" },
     summarize:  { icon:"📋", title:"Summary" },
@@ -389,6 +388,93 @@ function buildFlashcards(text) {
   fcTot.textContent = flashcards.length;
   fcViewer.classList.remove("hidden");
   drawCard();
+
+  // ── SAVE DECK BUTTON (added after flashcards render) ──
+  injectSaveDeckButton();
+}
+
+function injectSaveDeckButton() {
+  // Remove any existing one
+  const old = $("save-deck-btn");
+  if (old) old.remove();
+
+  const btn = document.createElement("button");
+  btn.id = "save-deck-btn";
+  btn.innerHTML = "💾 Save as Deck";
+  btn.style.cssText = `
+    display: block;
+    width: calc(100% - 3rem);
+    margin: 0 1.5rem 1.2rem;
+    padding: .55rem 1rem;
+    background: none;
+    border: 1px dashed rgba(240,192,64,.35);
+    border-radius: var(--r-sm);
+    color: var(--gold);
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: .84rem;
+    cursor: pointer;
+    transition: all .18s;
+  `;
+  btn.onmouseenter = () => { btn.style.background = "var(--gold-a10)"; btn.style.borderStyle = "solid"; };
+  btn.onmouseleave = () => { btn.style.background = "none"; btn.style.borderStyle = "dashed"; };
+  btn.onclick = saveDeck;
+
+  // Insert after flashcard viewer, before followup
+  const fc = $("fc-viewer");
+  fc.parentNode.insertBefore(btn, fc.nextSibling);
+}
+
+async function saveDeck() {
+  if (!flashcards.length) return;
+
+  // Deck name — use file name or first 40 chars of input
+  let defaultName = "";
+  if (currentTab === "file" && selectedFile) {
+    defaultName = selectedFile.name.replace(/\.[^.]+$/, "");
+  } else {
+    defaultName = textInput.value.trim().slice(0, 40).replace(/\n/g, " ");
+  }
+
+  const name = prompt("Name this deck:", defaultName || "My Deck");
+  if (!name || !name.trim()) return;
+
+  const btn = $("save-deck-btn");
+  const origText = btn.innerHTML;
+  btn.innerHTML = "Saving…";
+  btn.disabled  = true;
+
+  try {
+    const res = await fetch(`${API_BASE}/decks`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: name.trim(),
+        source: currentTab === "file" && selectedFile ? selectedFile.name : "",
+        cards: flashcards.map(c => ({ front: c.front, back: c.back }))
+      })
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    btn.innerHTML = `✅ Saved "${data.name}" (${data.card_count} cards)`;
+    btn.style.borderColor = "rgba(52,211,153,.4)";
+    btn.style.color = "var(--green)";
+    btn.style.borderStyle = "solid";
+
+    // After 3s show "View Decks" link
+    setTimeout(() => {
+      btn.innerHTML = `✅ Saved! <a href="decks.html" style="color:var(--gold);margin-left:.4rem">View My Decks →</a>`;
+      btn.disabled = false;
+      btn.onclick = null;
+    }, 2500);
+
+  } catch (e) {
+    btn.innerHTML = origText;
+    btn.disabled  = false;
+    alert("Save failed — check backend connection.\n" + e.message);
+  }
 }
 
 function drawCard() {
@@ -396,9 +482,7 @@ function drawCard() {
   fcFrontTx.textContent = c.front;
   fcBackTx.textContent  = c.back;
   fcCur.textContent     = fcIdx + 1;
-  // Progress bar
   fcFill.style.width = `${((fcIdx + 1) / flashcards.length) * 100}%`;
-  // Reset flip
   fcFlipped = false;
   fcCard.classList.remove("flipped");
   fcHint.textContent = "Click card to reveal answer";

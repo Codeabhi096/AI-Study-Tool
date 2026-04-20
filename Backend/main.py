@@ -177,7 +177,7 @@ def build_prompt(action: str, content: str, lang: str = "English") -> str:
     return prompts.get(action, base + "Analyze and explain this content helpfully." + lang_note)
 
 
-# ── ROUTES ─────────────────────────────────────────────────────
+# ── EXISTING ROUTES ────────────────────────────────────────────
 
 class TextRequest(BaseModel):
     content: str
@@ -233,3 +233,188 @@ async def upload_file(
     prompt = build_prompt(action, content, lang)
     result = await call_ai(prompt)
     return {"filename": file.filename, "action": action, "response": result["text"], "ai_source": result["source"]}
+
+
+# ── NEW: DECK & SPACED REPETITION ROUTES ──────────────────────
+# These are additive — existing routes above are unchanged.
+
+from datetime import datetime
+from typing import List
+from database import get_conn
+from models import create_tables
+from sm2 import calculate_sm2, next_review_date
+
+
+# Create tables on startup
+@app.on_event("startup")
+def startup_event():
+    try:
+        create_tables()
+        print("[DB] Tables ready ✅")
+    except Exception as e:
+        print(f"[DB] Table creation failed: {e}")
+
+
+# ── Pydantic models for new routes ────────────────────────────
+
+class CardIn(BaseModel):
+    front: str
+    back: str
+
+class DeckCreate(BaseModel):
+    name: str
+    source: str = ""
+    cards: List[CardIn] = []
+
+class ReviewIn(BaseModel):
+    quality: int  # 0-5
+
+
+# ── Deck endpoints ─────────────────────────────────────────────
+
+@app.post("/decks")
+def create_deck(body: DeckCreate):
+    """Save a new deck with its cards"""
+    conn = get_conn()
+    try:
+        cur = conn.execute(
+            "INSERT INTO decks (name, source) VALUES (?, ?)",
+            (body.name.strip(), body.source.strip())
+        )
+        deck_id = cur.lastrowid
+
+        for card in body.cards:
+            conn.execute(
+                "INSERT INTO cards (deck_id, front, back) VALUES (?, ?, ?)",
+                (deck_id, card.front.strip(), card.back.strip())
+            )
+        conn.commit()
+        return {"id": deck_id, "name": body.name, "card_count": len(body.cards)}
+    finally:
+        conn.close()
+
+
+@app.get("/decks")
+def list_decks():
+    """Get all decks with card counts and due counts"""
+    conn = get_conn()
+    try:
+        now = datetime.utcnow().isoformat()
+        rows = conn.execute("""
+            SELECT
+                d.id,
+                d.name,
+                d.source,
+                d.created_at,
+                COUNT(c.id)                                      AS total_cards,
+                SUM(CASE WHEN c.next_review <= ? THEN 1 ELSE 0 END) AS due_cards,
+                SUM(CASE WHEN c.repetitions >= 3 THEN 1 ELSE 0 END) AS mastered_cards
+            FROM decks d
+            LEFT JOIN cards c ON c.deck_id = d.id
+            GROUP BY d.id
+            ORDER BY d.created_at DESC
+        """, (now,)).fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        conn.close()
+
+
+@app.get("/decks/{deck_id}")
+def get_deck(deck_id: int):
+    """Get a single deck with all its cards"""
+    conn = get_conn()
+    try:
+        deck = conn.execute("SELECT * FROM decks WHERE id = ?", (deck_id,)).fetchone()
+        if not deck:
+            raise HTTPException(status_code=404, detail="Deck not found")
+        cards = conn.execute(
+            "SELECT * FROM cards WHERE deck_id = ? ORDER BY id", (deck_id,)
+        ).fetchall()
+        return {**dict(deck), "cards": [dict(c) for c in cards]}
+    finally:
+        conn.close()
+
+
+@app.delete("/decks/{deck_id}")
+def delete_deck(deck_id: int):
+    """Delete a deck and all its cards"""
+    conn = get_conn()
+    try:
+        conn.execute("DELETE FROM cards WHERE deck_id = ?", (deck_id,))
+        conn.execute("DELETE FROM decks WHERE id = ?", (deck_id,))
+        conn.commit()
+        return {"deleted": deck_id}
+    finally:
+        conn.close()
+
+
+# ── Review / SM-2 endpoints ────────────────────────────────────
+
+@app.get("/decks/{deck_id}/review")
+def get_due_cards(deck_id: int):
+    """Get cards due for review in this deck"""
+    conn = get_conn()
+    try:
+        now = datetime.utcnow().isoformat()
+        cards = conn.execute(
+            "SELECT * FROM cards WHERE deck_id = ? AND next_review <= ? ORDER BY next_review",
+            (deck_id, now)
+        ).fetchall()
+        return [dict(c) for c in cards]
+    finally:
+        conn.close()
+
+
+@app.post("/cards/{card_id}/review")
+def review_card(card_id: int, body: ReviewIn):
+    """Submit a review rating for a card and update SM-2 schedule"""
+    conn = get_conn()
+    try:
+        card = conn.execute("SELECT * FROM cards WHERE id = ?", (card_id,)).fetchone()
+        if not card:
+            raise HTTPException(status_code=404, detail="Card not found")
+
+        new_interval, new_reps, new_ease = calculate_sm2(
+            quality=body.quality,
+            repetitions=card["repetitions"],
+            easiness=card["easiness"],
+            interval=card["interval"]
+        )
+        next_rev = next_review_date(new_interval)
+
+        conn.execute(
+            """UPDATE cards
+               SET interval = ?, repetitions = ?, easiness = ?, next_review = ?
+               WHERE id = ?""",
+            (new_interval, new_reps, new_ease, next_rev, card_id)
+        )
+        conn.commit()
+        return {
+            "card_id": card_id,
+            "next_review": next_rev,
+            "interval_days": new_interval,
+            "repetitions": new_reps,
+            "easiness": new_ease
+        }
+    finally:
+        conn.close()
+
+
+@app.get("/decks/{deck_id}/stats")
+def deck_stats(deck_id: int):
+    """Mastery breakdown for a deck"""
+    conn = get_conn()
+    try:
+        now = datetime.utcnow().isoformat()
+        row = conn.execute("""
+            SELECT
+                COUNT(*)                                              AS total,
+                SUM(CASE WHEN repetitions = 0 THEN 1 ELSE 0 END)     AS new_cards,
+                SUM(CASE WHEN repetitions BETWEEN 1 AND 2 THEN 1 ELSE 0 END) AS learning,
+                SUM(CASE WHEN repetitions >= 3 THEN 1 ELSE 0 END)    AS mastered,
+                SUM(CASE WHEN next_review <= ? THEN 1 ELSE 0 END)    AS due
+            FROM cards WHERE deck_id = ?
+        """, (now, deck_id)).fetchone()
+        return dict(row)
+    finally:
+        conn.close()

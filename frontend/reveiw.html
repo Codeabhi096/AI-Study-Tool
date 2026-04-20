@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Review — StudyAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    main { max-width: 640px; margin: 0 auto; padding: 1.5rem 1.5rem 5rem; }
+
+    .review-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .review-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--t1);
+    }
+    .review-subtitle {
+      font-size: .75rem;
+      color: var(--t3);
+      font-family: var(--mono);
+      margin-top: .2rem;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .38rem .85rem;
+      background: none;
+      border: 1px solid var(--bdr2);
+      border-radius: var(--r-xs);
+      color: var(--t2);
+      font-family: var(--sans);
+      font-size: .82rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .18s;
+    }
+    .back-btn:hover { color: var(--t1); border-color: var(--bdr3); }
+
+    /* Progress bar */
+    .progress-wrap { margin-bottom: 1.2rem; }
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: .7rem;
+      color: var(--t3);
+      margin-bottom: .4rem;
+    }
+    .progress-track {
+      height: 4px;
+      background: var(--surf3);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--blue), var(--gold));
+      border-radius: 4px;
+      transition: width .4s cubic-bezier(.25,.46,.45,.94);
+    }
+
+    /* Flashcard */
+    .fc-scene { perspective: 1000px; margin-bottom: 1rem; }
+    .fc-card {
+      position: relative;
+      width: 100%;
+      min-height: 200px;
+      transform-style: preserve-3d;
+      transition: transform .5s cubic-bezier(.4,0,.2,1);
+      cursor: pointer;
+    }
+    .fc-card.flipped { transform: rotateY(180deg); }
+    .fc-front, .fc-back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      background: var(--surf);
+      border: 1px solid var(--bdr2);
+      border-radius: var(--r);
+      padding: 2.2rem 1.8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: .7rem;
+      min-height: 200px;
+    }
+    .fc-back {
+      transform: rotateY(180deg);
+      border-color: rgba(52,211,153,.25);
+      background: rgba(52,211,153,.04);
+    }
+    .fc-label {
+      font-family: var(--mono);
+      font-size: .63rem;
+      color: var(--t3);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .fc-text {
+      font-size: 1.05rem;
+      font-weight: 500;
+      line-height: 1.65;
+      color: var(--t1);
+      text-align: center;
+    }
+    .fc-back .fc-text { color: var(--green); }
+    .fc-hint {
+      text-align: center;
+      font-family: var(--mono);
+      font-size: .7rem;
+      color: var(--t3);
+      margin-bottom: .6rem;
+    }
+
+    /* Flip button */
+    .flip-btn {
+      width: 100%;
+      padding: .6rem;
+      background: var(--gold-a10);
+      border: 1px solid var(--gold-a30);
+      border-radius: var(--r-sm);
+      color: var(--gold);
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: .9rem;
+      cursor: pointer;
+      transition: all .18s;
+      margin-bottom: 1rem;
+    }
+    .flip-btn:hover { background: var(--gold-a20); }
+
+    /* Rating buttons — hidden until card flipped */
+    .rating-section {
+      display: none;
+      flex-direction: column;
+      gap: .6rem;
+    }
+    .rating-section.visible { display: flex; }
+    .rating-label {
+      font-family: var(--mono);
+      font-size: .68rem;
+      color: var(--t3);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      text-align: center;
+    }
+    .rating-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: .6rem;
+    }
+    .rate-btn {
+      padding: .65rem .4rem;
+      border: 1px solid var(--bdr2);
+      border-radius: var(--r-sm);
+      background: var(--surf2);
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: .82rem;
+      cursor: pointer;
+      transition: all .18s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .25rem;
+      color: var(--t1);
+    }
+    .rate-btn span.sub {
+      font-size: .62rem;
+      font-weight: 400;
+      font-family: var(--mono);
+      color: var(--t3);
+    }
+    .rate-btn.forgot:hover  { border-color: var(--red);   background: rgba(248,113,113,.08); color: var(--red); }
+    .rate-btn.hard:hover    { border-color: var(--gold);  background: var(--gold-a10);       color: var(--gold); }
+    .rate-btn.easy:hover    { border-color: var(--green); background: var(--green-a);        color: var(--green); }
+
+    /* Done screen */
+    .done-screen {
+      display: none;
+      text-align: center;
+      padding: 3.5rem 1.5rem;
+    }
+    .done-screen.visible { display: block; }
+    .done-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .done-title { font-size: 1.5rem; font-weight: 800; color: var(--t1); margin-bottom: .5rem; }
+    .done-sub { font-size: .9rem; color: var(--t2); margin-bottom: 2rem; line-height: 1.7; }
+    .done-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .8rem;
+      margin-bottom: 2rem;
+    }
+    .dstat {
+      background: var(--surf2);
+      border: 1px solid var(--bdr);
+      border-radius: var(--r-sm);
+      padding: .9rem .5rem;
+    }
+    .dstat-num {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--t1);
+      font-family: var(--mono);
+    }
+    .dstat-lbl {
+      font-size: .68rem;
+      color: var(--t3);
+      font-family: var(--mono);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-top: .2rem;
+    }
+    .done-btns { display: flex; gap: .8rem; justify-content: center; flex-wrap: wrap; }
+    .done-btn {
+      padding: .55rem 1.4rem;
+      border-radius: var(--r-sm);
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: .88rem;
+      cursor: pointer;
+      transition: all .18s;
+    }
+    .done-btn.primary {
+      background: var(--gold);
+      color: #07080d;
+      border: none;
+      box-shadow: 0 4px 18px rgba(240,192,64,.3);
+    }
+    .done-btn.primary:hover { background: var(--gold2); }
+    .done-btn.secondary {
+      background: none;
+      border: 1px solid var(--bdr2);
+      color: var(--t2);
+    }
+    .done-btn.secondary:hover { border-color: var(--bdr3); color: var(--t1); }
+
+    /* Loading / error */
+    .state-msg {
+      text-align: center;
+      padding: 3rem;
+      color: var(--t3);
+      font-family: var(--mono);
+      font-size: .85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+  <div class="noise"></div>
+
+  <header id="header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+          <path d="M16 2L28 9V23L16 30L4 23V9L16 2Z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/>
+          <path d="M16 8L23 12V20L16 24L9 20V12L16 8Z" fill="currentColor" opacity="0.2"/>
+          <circle cx="16" cy="16" r="3" fill="currentColor"/>
+        </svg>
+      </div>
+      <span class="logo-text">Study<span class="logo-accent">AI</span></span>
+    </div>
+    <nav class="nav">
+      <a href="decks.html" class="back-btn">← My Decks</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="review-header">
+      <div>
+        <div class="review-title" id="deck-title">Loading…</div>
+        <div class="review-subtitle" id="deck-subtitle"></div>
+      </div>
+    </div>
+
+    <!-- Loading state -->
+    <div class="state-msg" id="state-msg">Loading cards…</div>
+
+    <!-- Review area -->
+    <div id="review-area" style="display:none">
+
+      <div class="progress-wrap">
+        <div class="progress-info">
+          <span id="prog-text">Card 1 of 10</span>
+          <span id="prog-pct">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Flashcard -->
+      <div class="fc-scene">
+        <div class="fc-card" id="fc-card" onclick="flipCard()">
+          <div class="fc-front">
+            <p class="fc-label">Question</p>
+            <p class="fc-text" id="fc-front"></p>
+          </div>
+          <div class="fc-back">
+            <p class="fc-label">Answer</p>
+            <p class="fc-text" id="fc-back"></p>
+          </div>
+        </div>
+      </div>
+
+      <p class="fc-hint" id="fc-hint">Click card to reveal answer</p>
+
+      <button class="flip-btn" id="flip-btn" onclick="flipCard()">Flip Card</button>
+
+      <!-- Rating buttons — shown after flip -->
+      <div class="rating-section" id="rating-section">
+        <p class="rating-label">How well did you remember?</p>
+        <div class="rating-btns">
+          <button class="rate-btn forgot" onclick="rateCard(1)">
+            😣 Forgot
+            <span class="sub">Reset card</span>
+          </button>
+          <button class="rate-btn hard" onclick="rateCard(3)">
+            🤔 Hard
+            <span class="sub">Short interval</span>
+          </button>
+          <button class="rate-btn easy" onclick="rateCard(5)">
+            ✅ Easy
+            <span class="sub">Long interval</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Done screen -->
+    <div class="done-screen" id="done-screen">
+      <div class="done-icon">🎉</div>
+      <div class="done-title">Session Complete!</div>
+      <div class="done-sub" id="done-sub">You've reviewed all due cards for this deck.</div>
+      <div class="done-stats">
+        <div class="dstat">
+          <div class="dstat-num" id="stat-easy">0</div>
+          <div class="dstat-lbl">Easy</div>
+        </div>
+        <div class="dstat">
+          <div class="dstat-num" id="stat-hard">0</div>
+          <div class="dstat-lbl">Hard</div>
+        </div>
+        <div class="dstat">
+          <div class="dstat-num" id="stat-forgot">0</div>
+          <div class="dstat-lbl">Forgot</div>
+        </div>
+      </div>
+      <div class="done-btns">
+        <button class="done-btn primary" onclick="window.location.href='decks.html'">Back to Decks</button>
+        <button class="done-btn secondary" onclick="window.location.href='index.html'">Study More</button>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // Canvas
+    (function() {
+      const canvas = document.getElementById("bg-canvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      let W, H, particles = [];
+      function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+      function Particle() {
+        this.reset = function() {
+          this.x = Math.random()*W; this.y = Math.random()*H;
+          this.r = Math.random()*1.5+0.3; this.vx = (Math.random()-.5)*.3; this.vy = (Math.random()-.5)*.3;
+          this.a = Math.random()*.4+0.1; this.c = Math.random()>.6?[240,192,64]:[79,142,240];
+        }; this.reset();
+      }
+      function init() { particles = Array.from({length:60},()=>new Particle()); }
+      function draw() {
+        ctx.clearRect(0,0,W,H);
+        particles.forEach(p => {
+          p.x+=p.vx; p.y+=p.vy;
+          if(p.x<0||p.x>W||p.y<0||p.y>H) p.reset();
+          ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+          ctx.fillStyle=`rgba(${p.c[0]},${p.c[1]},${p.c[2]},${p.a})`; ctx.fill();
+        });
+        requestAnimationFrame(draw);
+      }
+      resize(); init(); draw(); window.addEventListener("resize",resize);
+    })();
+
+    const API_BASE  = localStorage.getItem("sai_backend") || "https://ai-study-tool-4tnw.onrender.com";
+    const DECK_ID   = localStorage.getItem("sai_review_deck_id");
+    const DECK_NAME = localStorage.getItem("sai_review_deck_name") || "Deck";
+
+    let cards    = [];
+    let idx      = 0;
+    let flipped  = false;
+    let stats    = { easy: 0, hard: 0, forgot: 0 };
+
+    document.getElementById("deck-title").textContent = DECK_NAME;
+
+    async function loadCards() {
+      const stateMsg = document.getElementById("state-msg");
+      if (!DECK_ID) {
+        stateMsg.textContent = "No deck selected — go back to My Decks.";
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE}/decks/${DECK_ID}/review`);
+        cards = await res.json();
+        if (!Array.isArray(cards) || !cards.length) {
+          stateMsg.innerHTML = "🎉 No cards due for review!<br><br><a href='decks.html' style='color:var(--gold)'>Back to Decks</a>";
+          document.getElementById("deck-subtitle").textContent = "All caught up";
+          return;
+        }
+        document.getElementById("deck-subtitle").textContent = `${cards.length} card${cards.length !== 1 ? "s" : ""} due`;
+        stateMsg.style.display = "none";
+        document.getElementById("review-area").style.display = "block";
+        showCard();
+      } catch (e) {
+        stateMsg.textContent = "Failed to load cards. Check backend connection.";
+      }
+    }
+
+    function showCard() {
+      const card = cards[idx];
+      document.getElementById("fc-front").textContent = card.front;
+      document.getElementById("fc-back").textContent  = card.back;
+      flipped = false;
+      document.getElementById("fc-card").classList.remove("flipped");
+      document.getElementById("fc-hint").textContent = "Click card to reveal answer";
+      document.getElementById("rating-section").classList.remove("visible");
+      document.getElementById("flip-btn").style.display = "";
+
+      // Progress
+      const done = idx;
+      const total = cards.length;
+      const pct = Math.round((done / total) * 100);
+      document.getElementById("prog-text").textContent = `Card ${idx + 1} of ${total}`;
+      document.getElementById("prog-pct").textContent  = `${pct}%`;
+      document.getElementById("prog-fill").style.width = `${pct}%`;
+    }
+
+    function flipCard() {
+      if (flipped) return;
+      flipped = true;
+      document.getElementById("fc-card").classList.add("flipped");
+      document.getElementById("fc-hint").textContent = "How well did you remember?";
+      document.getElementById("rating-section").classList.add("visible");
+      document.getElementById("flip-btn").style.display = "none";
+    }
+
+    async function rateCard(quality) {
+      const card = cards[idx];
+      // Update stats
+      if (quality <= 1)      stats.forgot++;
+      else if (quality <= 3) stats.hard++;
+      else                   stats.easy++;
+
+      try {
+        await fetch(`${API_BASE}/cards/${card.id}/review`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ quality })
+        });
+      } catch (e) {
+        console.warn("Review API failed, continuing offline:", e);
+      }
+
+      idx++;
+      if (idx >= cards.length) {
+        showDone();
+      } else {
+        showCard();
+      }
+    }
+
+    function showDone() {
+      document.getElementById("review-area").style.display = "none";
+      const done = document.getElementById("done-screen");
+      done.classList.add("visible");
+      document.getElementById("stat-easy").textContent   = stats.easy;
+      document.getElementById("stat-hard").textContent   = stats.hard;
+      document.getElementById("stat-forgot").textContent = stats.forgot;
+      document.getElementById("done-sub").textContent =
+        `Reviewed ${cards.length} card${cards.length !== 1 ? "s" : ""}. ` +
+        `${stats.easy} easy, ${stats.hard} hard, ${stats.forgot} forgot.`;
+    }
+
+    loadCards();
+  </script>
+</body>
+</html>
